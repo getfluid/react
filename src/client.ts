@@ -1,6 +1,6 @@
 import { Project } from "./types";
 
-export const BASE_URL = "https://getfluid.co";
+export const BASE_URL = "https://www.getfluid.co";
 
 type ClientParams = { clientId: string };
 class Client {
