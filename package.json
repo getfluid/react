@@ -1,0 +1,43 @@
+{
+  "name": "@getfluid/component",
+  "private": false,
+  "version": "0.0.1",
+  "description": "A component that renders the output of the Fluid studio",
+  "scripts": {
+    "build": "rollup -c",
+    "build -w": "rollup -c -w"
+  },
+  "author": "Alon Zuman",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.20.2",
+    "@babel/preset-env": "^7.16.4",
+    "@babel/preset-react": "^7.16.0",
+    "@babel/preset-typescript": "^7.16.0",
+    "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@rollup/plugin-typescript": "8.3.3",
+    "@types/react": "^18.0.15",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.7.2",
+    "html-webpack-plugin": "^5.5.0",
+    "identity-obj-proxy": "^3.0.0",
+    "rollup": "^2.60.0",
+    "rollup-plugin-dts": "^5.0.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.3",
+    "app": "*"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@tanstack/react-query": "^4.10.0"
+  }
+}
