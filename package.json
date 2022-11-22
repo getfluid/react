@@ -1,7 +1,7 @@
 {
   "name": "@getfluid/component",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A component that renders the output of the Fluid studio",
   "scripts": {
     "build": "rollup -c",
