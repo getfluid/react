@@ -3317,7 +3317,7 @@ var DESKTOP_COLS = 48;
 var TABLET_COLS = 32;
 var MOBILE_COLS = 16;
 
-var BASE_URL = "https://getfluid.co";
+var BASE_URL = "https://www.getfluid.co";
 var Client = /** @class */ (function () {
     function Client(_a) {
         var clientId = _a.clientId;
@@ -3329,7 +3329,7 @@ var Client = /** @class */ (function () {
             var res;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, fetch("".concat(BASE_URL, "/api/project/").concat(params === null || params === void 0 ? void 0 : params.id, "?clientId=").concat(this.clientId))];
+                    case 0: return [4 /*yield*/, fetch("".concat(BASE_URL, "/api/project/").concat(params === null || params === void 0 ? void 0 : params.id, "?clientId=").concat(this.clientId), { method: "GET" })];
                     case 1:
                         res = _a.sent();
                         return [2 /*return*/, res.json()];

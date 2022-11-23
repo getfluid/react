@@ -1,5 +1,5 @@
 import { Project } from "./types";
-export declare const BASE_URL = "https://getfluid.co";
+export declare const BASE_URL = "https://www.getfluid.co";
 type ClientParams = {
     clientId: string;
 };
