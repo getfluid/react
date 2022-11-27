@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { DESKTOP_WIDTH, MOBILE_WIDTH, TABLET_WIDTH } from "./component";
 
 export const useMediaQuery = (query: string) => {
   const [matches, setMatches] = useState(false);
@@ -17,11 +18,12 @@ export const useMediaQuery = (query: string) => {
   return matches;
 };
 
-export const useIsMobile = () => useMediaQuery("(max-width: 600px)");
+export const useIsMobile = () => useMediaQuery(`(max-width: ${MOBILE_WIDTH}px)`);
 export const useIsTablet = () => {
   const isBiggerThanMobile = useIsMobile();
-  const isSmallerThanDesktop = useMediaQuery("(max-width: 1024px)");
+  const isSmallerThanDesktop = useMediaQuery(`(max-width: ${TABLET_WIDTH}px)`);
   return !isBiggerThanMobile && isSmallerThanDesktop;
 };
 
-export const useIsDesktop = () => useMediaQuery("(min-width: 1024px)");
+export const useIsDesktop = () =>
+  useMediaQuery(`(min-width: ${DESKTOP_WIDTH}px)`);

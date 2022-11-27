@@ -3197,13 +3197,15 @@ var useMediaQuery = function (query) {
     }, [matches, query]);
     return matches;
 };
-var useIsMobile = function () { return useMediaQuery("(max-width: 600px)"); };
+var useIsMobile = function () { return useMediaQuery("(max-width: ".concat(MOBILE_WIDTH, "px)")); };
 var useIsTablet = function () {
     var isBiggerThanMobile = useIsMobile();
-    var isSmallerThanDesktop = useMediaQuery("(max-width: 1024px)");
+    var isSmallerThanDesktop = useMediaQuery("(max-width: ".concat(TABLET_WIDTH, "px)"));
     return !isBiggerThanMobile && isSmallerThanDesktop;
 };
-var useIsDesktop = function () { return useMediaQuery("(min-width: 1024px)"); };
+var useIsDesktop = function () {
+    return useMediaQuery("(min-width: ".concat(DESKTOP_WIDTH, "px)"));
+};
 
 function styleInject(css, ref) {
   if ( ref === void 0 ) ref = {};
@@ -3235,6 +3237,9 @@ function styleInject(css, ref) {
 var css_248z = "h1,\nh2,\nh3,\nh4,\nh5,\nh6,\np {\n  margin: 0;\n}\n\nbutton {\n  border: none;\n}\n";
 styleInject(css_248z);
 
+var MOBILE_WIDTH = 600;
+var TABLET_WIDTH = 1024;
+var DESKTOP_WIDTH = 1440;
 // TODO fix the context... for some reason its not working
 // const context = createContext<QueryClient | undefined>(undefined);
 var queryClient = new QueryClient();
@@ -3255,9 +3260,8 @@ var Component = function (_a) {
     return (React__default["default"].createElement(React__default["default"].Fragment, null, (_b = data === null || data === void 0 ? void 0 : data.nodes) === null || _b === void 0 ? void 0 : _b.map(function (node) { return (React__default["default"].createElement(Node, { data: node, key: node.id })); })));
 };
 var Node = function (_a) {
-    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
     var data = _a.data;
-    var _w = useNodeKeys(), keyPrefix = _w.keyPrefix, isMobile = _w.isMobile, isTablet = _w.isTablet;
+    var _b = useNodeKeys(), keyPrefix = _b.keyPrefix, isMobile = _b.isMobile, isTablet = _b.isTablet;
     var getNodeCols = function () {
         if (isMobile)
             return MOBILE_COLS;
@@ -3268,66 +3272,81 @@ var Node = function (_a) {
     var rowHeight = data.rowHeight - data.rowGap;
     var cols = getNodeCols();
     var rows = data.rows;
-    if (data.type === "GRID" && ((_b = data.children) === null || _b === void 0 ? void 0 : _b.length) > 0)
-        return (React__default["default"].createElement("section", { style: {
-                width: "100%",
-                backgroundColor: (data === null || data === void 0 ? void 0 : data.backgroundColor)
-                    ? data === null || data === void 0 ? void 0 : data.backgroundColor
-                    : "transparent",
-            } },
-            React__default["default"].createElement("div", { style: {
-                    maxWidth: (data === null || data === void 0 ? void 0 : data.maxWidth) ? data.maxWidth : "none",
-                    margin: "auto",
-                    display: "grid",
-                    rowGap: data.rowGap,
-                    columnGap: data.colGap,
-                    gridTemplateColumns: "repeat(".concat(cols, ", 1fr)"),
-                    gridTemplateRows: "repeat(".concat(rows, ", ").concat(rowHeight, "px)"),
-                } }, (_c = data === null || data === void 0 ? void 0 : data.children) === null || _c === void 0 ? void 0 : _c.map(function (node) { return (React__default["default"].createElement("div", { style: {
-                    position: "relative",
-                    gridColumnStart: node === null || node === void 0 ? void 0 : node["".concat(keyPrefix, "X")],
-                    gridColumnEnd: node === null || node === void 0 ? void 0 : node["".concat(keyPrefix, "W")],
-                    gridRowStart: node === null || node === void 0 ? void 0 : node["".concat(keyPrefix, "Y")],
-                    gridRowEnd: node === null || node === void 0 ? void 0 : node["".concat(keyPrefix, "H")],
-                }, key: node.id },
-                React__default["default"].createElement(Node, { data: node }))); }))));
-    if ((data === null || data === void 0 ? void 0 : data.type) === "BUTTON")
-        return data.href ? (React__default["default"].createElement("a", { href: data.href },
-            React__default["default"].createElement("button", { style: {
+    var defaultProps = {
+        className: "node_".concat(data.id),
+    };
+    var renderNode = function () {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
+        if (data.type === "GRID" && ((_a = data.children) === null || _a === void 0 ? void 0 : _a.length) > 0)
+            return (React__default["default"].createElement("section", { style: {
+                    width: "100%",
+                    backgroundColor: (data === null || data === void 0 ? void 0 : data.backgroundColor)
+                        ? data === null || data === void 0 ? void 0 : data.backgroundColor
+                        : "transparent",
+                } },
+                React__default["default"].createElement("div", { style: {
+                        maxWidth: (data === null || data === void 0 ? void 0 : data.maxWidth) ? data.maxWidth : "none",
+                        margin: "auto",
+                        display: "grid",
+                        rowGap: data.rowGap,
+                        columnGap: data.colGap,
+                        gridTemplateColumns: "repeat(".concat(cols, ", 1fr)"),
+                        gridTemplateRows: "repeat(".concat(rows, ", ").concat(rowHeight, "px)"),
+                    } }, (_b = data === null || data === void 0 ? void 0 : data.children) === null || _b === void 0 ? void 0 : _b.map(function (node) { return (React__default["default"].createElement("div", { style: {
+                        position: "relative",
+                        gridColumnStart: node === null || node === void 0 ? void 0 : node["".concat(keyPrefix, "X")],
+                        gridColumnEnd: node === null || node === void 0 ? void 0 : node["".concat(keyPrefix, "W")],
+                        gridRowStart: node === null || node === void 0 ? void 0 : node["".concat(keyPrefix, "Y")],
+                        gridRowEnd: node === null || node === void 0 ? void 0 : node["".concat(keyPrefix, "H")],
+                    }, key: node.id },
+                    React__default["default"].createElement(Node, { data: node }))); }))));
+        if ((data === null || data === void 0 ? void 0 : data.type) === "BUTTON")
+            return data.href ? (React__default["default"].createElement("a", { href: data.href },
+                React__default["default"].createElement("button", __assign({}, defaultProps, { style: {
+                        height: "100%",
+                        width: "100%",
+                        backgroundColor: (_c = data.backgroundColor) !== null && _c !== void 0 ? _c : "transparent",
+                        color: (_d = data.color) !== null && _d !== void 0 ? _d : "#000000",
+                    } }),
+                    React__default["default"].createElement("span", { style: { textAlign: "center" }, dangerouslySetInnerHTML: { __html: (_e = data.text) !== null && _e !== void 0 ? _e : "" } })))) : (React__default["default"].createElement("button", __assign({}, defaultProps, { style: {
                     height: "100%",
                     width: "100%",
-                    backgroundColor: (_d = data.backgroundColor) !== null && _d !== void 0 ? _d : "transparent",
-                    color: (_e = data.color) !== null && _e !== void 0 ? _e : "#000000",
-                } },
-                React__default["default"].createElement("span", { style: { textAlign: "center" }, dangerouslySetInnerHTML: { __html: (_f = data.text) !== null && _f !== void 0 ? _f : "" } })))) : (React__default["default"].createElement("button", { style: {
-                height: "100%",
-                width: "100%",
-                backgroundColor: (_g = data.backgroundColor) !== null && _g !== void 0 ? _g : "transparent",
-                color: (_h = data.color) !== null && _h !== void 0 ? _h : "#000000",
-            } },
-            React__default["default"].createElement("span", { style: { textAlign: "center" }, dangerouslySetInnerHTML: { __html: (_j = data.text) !== null && _j !== void 0 ? _j : "" } })));
-    if ((data === null || data === void 0 ? void 0 : data.type) === "IMAGE")
-        return (
-        // eslint-disable-next-line @next/next/no-img-element
-        React__default["default"].createElement("img", { alt: (_k = data === null || data === void 0 ? void 0 : data.alt) !== null && _k !== void 0 ? _k : "", style: { objectFit: "cover", height: "100%", width: "100%" }, src: (_l = data === null || data === void 0 ? void 0 : data.src) !== null && _l !== void 0 ? _l : "" }));
-    if ((data === null || data === void 0 ? void 0 : data.type) === "VIDEO")
-        return (
-        // eslint-disable-next-line @next/next/no-img-element
-        React__default["default"].createElement("video", { autoPlay: true, loop: true, controls: false, muted: true, style: { objectFit: "cover", height: "100%", width: "100%" }, src: (_m = data === null || data === void 0 ? void 0 : data.src) !== null && _m !== void 0 ? _m : "" }));
-    if ((data === null || data === void 0 ? void 0 : data.type) === "BOX")
-        return (
-        // eslint-disable-next-line @next/next/no-img-element
-        React__default["default"].createElement("div", { style: {
-                width: "100%",
-                height: "100%",
-                backgroundColor: (_o = data === null || data === void 0 ? void 0 : data.backgroundColor) !== null && _o !== void 0 ? _o : "transparent",
-            } }));
-    return (React__default["default"].createElement("span", { style: {
-            textAlign: (_p = data === null || data === void 0 ? void 0 : data.textAlign) !== null && _p !== void 0 ? _p : "left",
-            fontSize: (_r = (_q = data === null || data === void 0 ? void 0 : data.variant) === null || _q === void 0 ? void 0 : _q["".concat(keyPrefix, "FontSize")]) !== null && _r !== void 0 ? _r : 16,
-            fontWeight: (_t = (_s = data === null || data === void 0 ? void 0 : data.variant) === null || _s === void 0 ? void 0 : _s["".concat(keyPrefix, "FontWeight")]) !== null && _t !== void 0 ? _t : "regular",
-            color: (_u = data === null || data === void 0 ? void 0 : data.color) !== null && _u !== void 0 ? _u : "inherit",
-        }, dangerouslySetInnerHTML: { __html: (_v = data === null || data === void 0 ? void 0 : data.text) !== null && _v !== void 0 ? _v : "" } }));
+                    backgroundColor: (_f = data.backgroundColor) !== null && _f !== void 0 ? _f : "transparent",
+                    color: (_g = data.color) !== null && _g !== void 0 ? _g : "#000000",
+                } }),
+                React__default["default"].createElement("span", { style: { textAlign: "center" }, dangerouslySetInnerHTML: { __html: (_h = data.text) !== null && _h !== void 0 ? _h : "" } })));
+        if ((data === null || data === void 0 ? void 0 : data.type) === "IMAGE")
+            return (
+            // eslint-disable-next-line @next/next/no-img-element
+            React__default["default"].createElement("img", __assign({}, defaultProps, { alt: (_j = data === null || data === void 0 ? void 0 : data.alt) !== null && _j !== void 0 ? _j : "", style: { objectFit: "cover", height: "100%", width: "100%" }, src: (_k = data === null || data === void 0 ? void 0 : data.src) !== null && _k !== void 0 ? _k : "" })));
+        if ((data === null || data === void 0 ? void 0 : data.type) === "VIDEO")
+            return (
+            // eslint-disable-next-line @next/next/no-img-element
+            React__default["default"].createElement("video", __assign({}, defaultProps, { autoPlay: true, loop: true, controls: false, muted: true, style: { objectFit: "cover", height: "100%", width: "100%" }, src: (_l = data === null || data === void 0 ? void 0 : data.src) !== null && _l !== void 0 ? _l : "" })));
+        if ((data === null || data === void 0 ? void 0 : data.type) === "BOX")
+            return (
+            // eslint-disable-next-line @next/next/no-img-element
+            React__default["default"].createElement("div", __assign({}, defaultProps, { style: {
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: (_m = data === null || data === void 0 ? void 0 : data.backgroundColor) !== null && _m !== void 0 ? _m : "transparent",
+                } })));
+        return (React__default["default"].createElement("span", __assign({}, defaultProps, { style: {
+                textAlign: (_o = data === null || data === void 0 ? void 0 : data.textAlign) !== null && _o !== void 0 ? _o : "left",
+                // fontSize: data?.variant?.[`${keyPrefix}FontSize`] ?? 16,
+                fontWeight: (_q = (_p = data === null || data === void 0 ? void 0 : data.variant) === null || _p === void 0 ? void 0 : _p["".concat(keyPrefix, "FontWeight")]) !== null && _q !== void 0 ? _q : "regular",
+                color: (_r = data === null || data === void 0 ? void 0 : data.color) !== null && _r !== void 0 ? _r : "inherit",
+            }, dangerouslySetInnerHTML: { __html: (_s = data === null || data === void 0 ? void 0 : data.text) !== null && _s !== void 0 ? _s : "" } })));
+    };
+    return (React__default["default"].createElement(React__default["default"].Fragment, null,
+        renderNode(),
+        React__default["default"].createElement(NodeStyles, { data: data })));
+};
+var NodeStyles = function (_a) {
+    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+    var data = _a.data;
+    var css = "\n      .node_".concat(data.id, " {\n        background-color: ").concat((_b = data.backgroundColor) !== null && _b !== void 0 ? _b : "transparent", ";\n        color: ").concat((_c = data === null || data === void 0 ? void 0 : data.color) !== null && _c !== void 0 ? _c : "#000000", ";\n        border-radius: ").concat(data === null || data === void 0 ? void 0 : data.borderRadius, "px;\n        font-size: ").concat((_f = (_e = (_d = data === null || data === void 0 ? void 0 : data.variant) === null || _d === void 0 ? void 0 : _d.desktopFontSize) !== null && _e !== void 0 ? _e : data === null || data === void 0 ? void 0 : data.fontSize) !== null && _f !== void 0 ? _f : 16, "px;\n      }\n      \n      .node_").concat(data.id, ":hover {\n        background-color: ").concat((_h = (_g = data.hoverBackgroundColor) !== null && _g !== void 0 ? _g : data === null || data === void 0 ? void 0 : data.backgroundColor) !== null && _h !== void 0 ? _h : "transparent", ";\n        color: ").concat((_k = (_j = data === null || data === void 0 ? void 0 : data.hoverColor) !== null && _j !== void 0 ? _j : data === null || data === void 0 ? void 0 : data.color) !== null && _k !== void 0 ? _k : "#000000", ";\n      }\n      \n      @media screen and (max-width: ").concat(MOBILE_WIDTH, "px) {\n        .node_").concat(data.id, " {\n          font-size: ").concat((_o = (_m = (_l = data === null || data === void 0 ? void 0 : data.variant) === null || _l === void 0 ? void 0 : _l.mobileFontSize) !== null && _m !== void 0 ? _m : data === null || data === void 0 ? void 0 : data.fontSize) !== null && _o !== void 0 ? _o : 16, "px;\n          background-color: ").concat(data.backgroundColor, ";\n        }\n      }\n      \n      @media screen and (min-width: ").concat(MOBILE_WIDTH, "px) and (max-width: ").concat(TABLET_WIDTH, "px) {\n        .node_").concat(data.id, " {\n          font-size: ").concat((_r = (_q = (_p = data === null || data === void 0 ? void 0 : data.variant) === null || _p === void 0 ? void 0 : _p.tabletFontSize) !== null && _q !== void 0 ? _q : data === null || data === void 0 ? void 0 : data.fontSize) !== null && _r !== void 0 ? _r : 16, "px;\n          background-color: ").concat(data.backgroundColor, ";\n        }\n      }\n    ");
+    return React__default["default"].createElement("style", null, css);
 };
 var useNodeKeys = function () {
     var isMobile = useIsMobile();
@@ -3355,7 +3374,7 @@ var Client = /** @class */ (function () {
             var res;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, fetch("".concat(BASE_URL, "/api/project/").concat(params === null || params === void 0 ? void 0 : params.id, "?clientId=").concat(this.clientId), { method: "GET" })];
+                    case 0: return [4 /*yield*/, fetch("".concat(BASE_URL, "/api/project/").concat(params === null || params === void 0 ? void 0 : params.id, "?clientId=").concat(this.clientId))];
                     case 1:
                         res = _a.sent();
                         return [2 /*return*/, res.json()];

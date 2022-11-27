@@ -7,6 +7,11 @@ import React, { FC } from "react";
 import Client from "../client";
 import { Project, NodeWithChildren, Node as NodeType } from "../types";
 import { useIsMobile, useIsTablet } from "./hooks";
+import type { Node, Variant } from "@prisma/client";
+
+export const MOBILE_WIDTH = 600;
+export const TABLET_WIDTH = 1024;
+export const DESKTOP_WIDTH = 1440;
 
 import "./component.css";
 
@@ -64,49 +69,71 @@ const Node: FC<NodeProps> = ({ data }) => {
   const cols = getNodeCols();
   const rows = data.rows;
 
-  if (data.type === "GRID" && data.children?.length > 0)
-    return (
-      <section
-        style={{
-          width: "100%",
-          backgroundColor: data?.backgroundColor
-            ? data?.backgroundColor
-            : "transparent",
-        }}
-      >
-        <div
+  const defaultProps = {
+    className: `node_${data.id}`,
+  };
+
+  const renderNode = () => {
+    if (data.type === "GRID" && data.children?.length > 0)
+      return (
+        <section
           style={{
-            maxWidth: data?.maxWidth ? data.maxWidth : "none",
-            margin: "auto",
-            display: "grid",
-            rowGap: data.rowGap,
-            columnGap: data.colGap,
-            gridTemplateColumns: `repeat(${cols}, 1fr)`,
-            gridTemplateRows: `repeat(${rows}, ${rowHeight}px)`,
+            width: "100%",
+            backgroundColor: data?.backgroundColor
+              ? data?.backgroundColor
+              : "transparent",
           }}
         >
-          {data?.children?.map((node) => (
-            <div
-              style={{
-                position: "relative",
-                gridColumnStart: node?.[`${keyPrefix}X`],
-                gridColumnEnd: node?.[`${keyPrefix}W`],
-                gridRowStart: node?.[`${keyPrefix}Y`],
-                gridRowEnd: node?.[`${keyPrefix}H`],
-              }}
-              key={node.id}
-            >
-              <Node data={node} />
-            </div>
-          ))}
-        </div>
-      </section>
-    );
+          <div
+            style={{
+              maxWidth: data?.maxWidth ? data.maxWidth : "none",
+              margin: "auto",
+              display: "grid",
+              rowGap: data.rowGap,
+              columnGap: data.colGap,
+              gridTemplateColumns: `repeat(${cols}, 1fr)`,
+              gridTemplateRows: `repeat(${rows}, ${rowHeight}px)`,
+            }}
+          >
+            {data?.children?.map((node) => (
+              <div
+                style={{
+                  position: "relative",
+                  gridColumnStart: node?.[`${keyPrefix}X`],
+                  gridColumnEnd: node?.[`${keyPrefix}W`],
+                  gridRowStart: node?.[`${keyPrefix}Y`],
+                  gridRowEnd: node?.[`${keyPrefix}H`],
+                }}
+                key={node.id}
+              >
+                <Node data={node} />
+              </div>
+            ))}
+          </div>
+        </section>
+      );
 
-  if (data?.type === "BUTTON")
-    return data.href ? (
-      <a href={data.href}>
+    if (data?.type === "BUTTON")
+      return data.href ? (
+        <a href={data.href}>
+          <button
+            {...defaultProps}
+            style={{
+              height: "100%",
+              width: "100%",
+              backgroundColor: data.backgroundColor ?? "transparent",
+              color: data.color ?? "#000000",
+            }}
+          >
+            <span
+              style={{ textAlign: "center" }}
+              dangerouslySetInnerHTML={{ __html: data.text ?? "" }}
+            />
+          </button>
+        </a>
+      ) : (
         <button
+          {...defaultProps}
           style={{
             height: "100%",
             width: "100%",
@@ -119,69 +146,108 @@ const Node: FC<NodeProps> = ({ data }) => {
             dangerouslySetInnerHTML={{ __html: data.text ?? "" }}
           />
         </button>
-      </a>
-    ) : (
-      <button
-        style={{
-          height: "100%",
-          width: "100%",
-          backgroundColor: data.backgroundColor ?? "transparent",
-          color: data.color ?? "#000000",
-        }}
-      >
-        <span
-          style={{ textAlign: "center" }}
-          dangerouslySetInnerHTML={{ __html: data.text ?? "" }}
+      );
+
+    if (data?.type === "IMAGE")
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          {...defaultProps}
+          alt={data?.alt ?? ""}
+          style={{ objectFit: "cover", height: "100%", width: "100%" }}
+          src={data?.src ?? ""}
         />
-      </button>
-    );
+      );
 
-  if (data?.type === "IMAGE")
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        alt={data?.alt ?? ""}
-        style={{ objectFit: "cover", height: "100%", width: "100%" }}
-        src={data?.src ?? ""}
-      />
-    );
+    if (data?.type === "VIDEO")
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <video
+          {...defaultProps}
+          autoPlay
+          loop
+          controls={false}
+          muted
+          style={{ objectFit: "cover", height: "100%", width: "100%" }}
+          src={data?.src ?? ""}
+        />
+      );
 
-  if (data?.type === "VIDEO")
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <video
-        autoPlay
-        loop
-        controls={false}
-        muted
-        style={{ objectFit: "cover", height: "100%", width: "100%" }}
-        src={data?.src ?? ""}
-      />
-    );
+    if (data?.type === "BOX")
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <div
+          {...defaultProps}
+          style={{
+            width: "100%",
+            height: "100%",
+            backgroundColor: data?.backgroundColor ?? "transparent",
+          }}
+        />
+      );
 
-  if (data?.type === "BOX")
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <div
+      <span
+        {...defaultProps}
         style={{
-          width: "100%",
-          height: "100%",
-          backgroundColor: data?.backgroundColor ?? "transparent",
+          textAlign: (data?.textAlign as "left" | "center" | "right") ?? "left",
+          // fontSize: data?.variant?.[`${keyPrefix}FontSize`] ?? 16,
+          fontWeight: data?.variant?.[`${keyPrefix}FontWeight`] ?? "regular",
+          color: data?.color ?? "inherit",
         }}
+        dangerouslySetInnerHTML={{ __html: data?.text ?? "" }}
       />
     );
+  };
 
   return (
-    <span
-      style={{
-        textAlign: (data?.textAlign as "left" | "center" | "right") ?? "left",
-        fontSize: data?.variant?.[`${keyPrefix}FontSize`] ?? 16,
-        fontWeight: data?.variant?.[`${keyPrefix}FontWeight`] ?? "regular",
-        color: data?.color ?? "inherit",
-      }}
-      dangerouslySetInnerHTML={{ __html: data?.text ?? "" }}
-    />
+    <>
+      {renderNode()}
+      <NodeStyles data={data} />
+    </>
   );
+};
+
+type NodeWithVariant = Node & { children: Node[]; variant: Variant | null };
+
+const NodeStyles: React.FC<{ data: NodeWithVariant }> = ({ data }) => {
+  const css = `
+      .node_${data.id} {
+        background-color: ${data.backgroundColor ?? "transparent"};
+        color: ${data?.color ?? "#000000"};
+        border-radius: ${data?.borderRadius}px;
+        font-size: ${
+          data?.variant?.desktopFontSize ?? data?.fontSize ?? 16
+        }px;
+      }
+      
+      .node_${data.id}:hover {
+        background-color: ${
+          data.hoverBackgroundColor ?? data?.backgroundColor ?? "transparent"
+        };
+        color: ${data?.hoverColor ?? data?.color ?? "#000000"};
+      }
+      
+      @media screen and (max-width: ${MOBILE_WIDTH}px) {
+        .node_${data.id} {
+          font-size: ${
+            data?.variant?.mobileFontSize ?? data?.fontSize ?? 16
+          }px;
+          background-color: ${data.backgroundColor};
+        }
+      }
+      
+      @media screen and (min-width: ${MOBILE_WIDTH}px) and (max-width: ${TABLET_WIDTH}px) {
+        .node_${data.id} {
+          font-size: ${
+            data?.variant?.tabletFontSize ?? data?.fontSize ?? 16
+          }px;
+          background-color: ${data.backgroundColor};
+        }
+      }
+    `;
+
+  return <style>{css}</style>;
 };
 
 type NodeGridKeys = Pick<
